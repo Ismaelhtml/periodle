@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Periodle - Adivina el elemento de la tabla periódica cada día">
+  <title>Periodle ⚗️ — Adivina el Elemento del Día</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <button class="icon-btn" id="btn-help" title="Cómo jugar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <div class="logo-wrap">
+        <h1 class="logo-title">⚗️ Periodle</h1>
+        <span class="logo-day" id="day-number">#1</span>
+      </div>
+      <button class="icon-btn" id="btn-stats" title="Estadísticas">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </button>
+    </div>
+    <div class="header-date" id="header-date"></div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- Search -->
+    <div class="search-section">
+      <div class="search-wrap">
+        <div class="input-container">
+          <input type="text" id="search-input"
+                 placeholder="Escribe el nombre de un elemento..."
+                 autocomplete="off" spellcheck="false">
+          <ul class="autocomplete-list hidden" id="autocomplete" role="listbox"></ul>
+        </div>
+        <button id="guess-btn" disabled>Adivinar</button>
+      </div>
+      <p class="attempts-left" id="attempts-left">8 intentos disponibles</p>
+    </div>
+
+    <!-- Table -->
+    <div class="game-area">
+      <div class="table-wrapper">
+        <table class="guess-table" id="guess-table">
+          <thead>
+            <tr>
+              <th class="th-element">Elemento</th>
+              <th>Categoría</th>
+              <th>Período</th>
+              <th>Grupo</th>
+              <th>Bloque</th>
+              <th>Estado</th>
+              <th>Origen</th>
+              <th>Nº At.</th>
+            </tr>
+          </thead>
+          <tbody id="guesses-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Ayuda -->
+  <div class="modal-overlay hidden" id="modal-help">
+    <div class="modal">
+      <button class="modal-close" id="close-help">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h2>🧪 Cómo Jugar</h2>
+      <div class="help-content">
+        <p>Adivina el <strong>elemento de la tabla periódica del día</strong> en 8 intentos.</p>
+        <p>Escribe el nombre del elemento que quieres intentar y pulsa <strong>Adivinar</strong>.</p>
+        <hr>
+        <p><strong>Significado de los colores:</strong></p>
+        <div class="color-legend">
+          <div class="legend-row">
+            <div class="legend-demo correct">✓</div>
+            <div><strong>Verde</strong> — ¡Exacto! Ese atributo coincide.</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-demo higher">↑</div>
+            <div><strong>Naranja ↑</strong> — El valor real es <em>mayor</em> que el de tu intento.</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-demo lower">↓</div>
+            <div><strong>Naranja ↓</strong> — El valor real es <em>menor</em> que el de tu intento.</div>
+          </div>
+          <div class="legend-row">
+            <div class="legend-demo wrong">✗</div>
+            <div><strong>Gris</strong> — Incorrecto.</div>
+          </div>
+        </div>
+        <hr>
+        <p>Las flechas ↑↓ se aplican a: <strong>Período, Grupo y Número Atómico</strong>.</p>
+        <p>El elemento diario cambia a medianoche y nunca se repite dos días seguidos.</p>
+        <hr>
+        <h3>Colores de categorías:</h3>
+        <div class="cat-legend" id="cat-legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Estadísticas -->
+  <div class="modal-overlay hidden" id="modal-stats">
+    <div class="modal">
+      <button class="modal-close" id="close-stats">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h2>📊 Estadísticas</h2>
+      <div id="stats-content"></div>
+      <div class="countdown-wrap">
+        <p>Próximo elemento en:</p>
+        <div id="countdown" class="countdown">--:--:--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Resultado (victoria/derrota) -->
+  <div class="modal-overlay hidden" id="modal-result">
+    <div class="modal result-modal">
+      <div id="result-content"></div>
+      <div id="element-reveal" class="element-reveal"></div>
+      <div class="countdown-wrap">
+        <p>Próximo elemento en:</p>
+        <div id="countdown2" class="countdown">--:--:--</div>
+      </div>
+      <div class="result-actions">
+        <button id="share-btn" class="btn-primary">📋 Compartir resultado</button>
+        <button id="close-result" class="btn-secondary">Ver tabla</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
