@@ -409,12 +409,12 @@ searchInput.addEventListener('keydown', e => {
     else if (acItems.length === 1) selectAc(0);
     else submitGuess();
   } else if (e.key === 'Escape') {
-    acList.classList.add('hidden');
+    closeAc();
   }
 });
 
 searchInput.addEventListener('blur', () => {
-  setTimeout(() => acList.classList.add('hidden'), 150);
+  setTimeout(() => closeAc(), 150);
 });
 
 function highlightAc() {
@@ -427,9 +427,15 @@ function selectAc(i) {
   const el = acItems[i];
   if (!el) return;
   searchInput.value = el.name;
+  closeAc();
+  submitGuess(); // envía el intento directamente al hacer clic en la opción
+}
+
+function closeAc() {
   acList.classList.add('hidden');
-  guessBtn.disabled = false;
-  searchInput.focus();
+  acList.innerHTML = '';
+  acItems = [];
+  acSelected = -1;
 }
 
 guessBtn.addEventListener('click', submitGuess);
@@ -454,7 +460,7 @@ function submitGuess() {
 
   searchInput.value = '';
   guessBtn.disabled = true;
-  acList.classList.add('hidden');
+  closeAc();
 
   const remaining = MAX_GUESSES - guesses.length;
 
